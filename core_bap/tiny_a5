@@ -1,10 +1,11 @@
-def __init__(self, key: str):
+class TinyA51:
+    def __init__(self, key: str):
         """
-        Khởi tạo hệ mã TinyA5/1 với khóa K 23 bit.
-        X: 6 bit, Y: 8 bit, Z: 9 bit (Tổng: 23 bit)
+        Khoi tao he ma TinyA5/1 voi khoa K 23 bit.
+        X: 6 bit, Y: 8 bit, Z: 9 bit (Tong: 23 bit)
         """
         if len(key) != 23 or not set(key).issubset({'0', '1'}):
-            raise ValueError("Khóa K phải gồm đúng 23 ký tự nhị phân ('0' hoặc '1').")
+            raise ValueError("Khoa K phai gom dung 23 ky tu nhi phan ('0' hoac '1').")
         
         # Phân bổ khóa K vào các thanh ghi X, Y, Z
         self.X = [int(b) for b in key[0:6]]    # 6 bit (x0..x5)
