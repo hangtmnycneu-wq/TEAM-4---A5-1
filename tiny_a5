@@ -1,0 +1,85 @@
+def __init__(self, key: str):
+        """
+        Khởi tạo hệ mã TinyA5/1 với khóa K 23 bit.
+        X: 6 bit, Y: 8 bit, Z: 9 bit (Tổng: 23 bit)
+        """
+        if len(key) != 23 or not set(key).issubset({'0', '1'}):
+            raise ValueError("Khóa K phải gồm đúng 23 ký tự nhị phân ('0' hoặc '1').")
+        
+        # Phân bổ khóa K vào các thanh ghi X, Y, Z
+        self.X = [int(b) for b in key[0:6]]    # 6 bit (x0..x5)
+        self.Y = [int(b) for b in key[6:14]]   # 8 bit (y0..y7)
+        self.Z = [int(b) for b in key[14:23]]  # 9 bit (z0..z8)
+
+    @staticmethod
+    def majority(x1: int, y3: int, z3: int) -> int:
+        """Hàm đa số: Trả về 1 nếu có từ hai bit 1 trở lên, ngược lại trả về 0."""
+        return 1 if (x1 + y3 + z3) >= 2 else 0
+
+    def clock_x(self):
+        """Quay thanh ghi X: t = x2 XOR x4 XOR x5, dịch phải, x0 = t."""
+        t = self.X[2] ^ self.X[4] ^ self.X[5]
+        self.X = [t] + self.X[:-1]
+
+    def clock_y(self):
+        """Quay thanh ghi Y: t = y6 XOR y7, dịch phải, y0 = t."""
+        t = self.Y[6] ^ self.Y[7]
+        self.Y = [t] + self.Y[:-1]
+
+    def clock_z(self):
+        """Quay thanh ghi Z: t = z2 XOR z7 XOR z8, dịch phải, z0 = t."""
+        t = self.Z[2] ^ self.Z[7] ^ self.Z[8]
+        self.Z = [t] + self.Z[:-1]
+
+    def generate_bit(self, verbose: bool = False) -> int:
+        """
+        Thực hiện 1 bước sinh bit:
+        1. Tính m = maj(x1, y3, z3)
+        2. Kiểm tra và quay các thanh ghi tương ứng
+        3. Bit sinh ra s_i = x5 XOR y7 XOR z8
+        """
+        x1, y3, z3 = self.X[1], self.Y[3], self.Z[3]
+        m = self.majority(x1, y3, z3)
+
+        clocked_regs = []
+        if x1 == m:
+            self.clock_x()
+            clocked_regs.append('X')
+        if y3 == m:
+            self.clock_y()
+            clocked_regs.append('Y')
+        if z3 == m:
+            self.clock_z()
+            clocked_regs.append('Z')
+
+        # Bit keystream sinh ra từ bit cuối của mỗi thanh ghi
+        s_i = self.X[5] ^ self.Y[7] ^ self.Z[8]
+
+        if verbose:
+            x_str = "".join(map(str, self.X))
+            y_str = "".join(map(str, self.Y))
+            z_str = "".join(map(str, self.Z))
+            print(f"   [Kiểm tra] x1={x1}, y3={y3}, z3={z3} -> m = maj({x1},{y3},{z3}) = {m}")
+            print(f"   [Quay] Các thanh ghi quay: {', '.join(clocked_regs)}")
+            print(f"   [Trạng thái sau quay] X={x_str}, Y={y_str}, Z={z_str}")
+            print(f"   [Bit sinh ra] s_i = x5({self.X[5]}) ^ y7({self.Y[7]}) ^ z8({self.Z[8]}) = {s_i}\n")
+
+        return s_i
+
+    def generate_keystream(self, length: int, verbose: bool = False) -> list:
+        """Sinh chuỗi Keystream có độ dài xác định."""
+        keystream = []
+        for i in range(length):
+            if verbose:
+                print(f"--- Bước {i} ---")
+            bit = self.generate_bit(verbose=verbose)
+            keystream.append(bit)
+        return keystream
+
+    def encrypt_decrypt(self, text_bits: str, verbose: bool = False) -> str:
+        """Mã hóa hoặc giải mã chuỗi bit bản rõ/bản mã bằng phép XOR."""
+        p_bits = [int(b) for b in text_bits]
+        keystream = self.generate_keystream(len(p_bits), verbose=verbose)
+        
+        c_bits = [p ^ s for p, s in zip(p_bits, keystream)]
+        return "".join(map(str, c_bits)), "".join(map(str, keystream))
