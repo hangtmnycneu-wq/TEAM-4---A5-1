@@ -68,3 +68,11 @@ print("1. Đã mã hoá thành công!")
 # 2. Giải mã
 process_file_a51("test_encrypted.bin", "test_decrypted.txt", key_chuan, 1)
 print("2. Đã giải mã thành công!")
+
+# 3. Test mã hoá với file ảnh (logo.png)
+process_file_a51("logo.png", "logo_encrypted.bin", key_chuan, 1)
+print("3. Đã mã hoá ảnh logo thành công!")
+
+# 4. Test giải mã file ảnh (Nhớ để đuôi đầu ra là .png)
+process_file_a51("logo_encrypted.bin", "logo_decrypted.png", key_chuan, 1)
+print("4. Đã giải mã ảnh logo thành công!")
