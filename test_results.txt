@@ -1,0 +1,19 @@
+test_01_encrypt_decrypt_round_trip (test_a51_core.TestStandardA51.test_01_encrypt_decrypt_round_trip)
+Ma hoa roi giai ma phai thu lai chuoi bit ban dau. ... ok
+test_02_different_frames (test_a51_core.TestStandardA51.test_02_different_frames)
+Hai frame khac nhau phai tao ket qua khac nhau voi du lieu nay. ... ok
+test_03_reject_invalid_key_length (test_a51_core.TestStandardA51.test_03_reject_invalid_key_length)
+Khoa khong du 64 bit phai bi tu choi. ... ok
+test_04_reject_invalid_frame (test_a51_core.TestStandardA51.test_04_reject_invalid_frame)
+Frame am phai bi tu choi. ... ok
+test_05_standard_a51_test_vector (test_a51_core.TestStandardA51.test_05_standard_a51_test_vector)
+So sanh keystream voi test vector A5/1 tham chieu. ... ok
+test_06_reject_non_binary_key (test_a51_core.TestStandardA51.test_06_reject_non_binary_key)
+Khoa chua ky tu khong phai 0 hoac 1 phai bi tu choi. ... ok
+test_07_reject_frame_out_of_range (test_a51_core.TestStandardA51.test_07_reject_frame_out_of_range)
+Frame vuot qua gioi han 22 bit phai bi tu choi. ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.002s
+
+OK
