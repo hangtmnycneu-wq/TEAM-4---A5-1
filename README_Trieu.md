@@ -1,91 +1,59 @@
-# Phần tích hợp của Triệu
+# Phần của Triệu: giao diện CLI, tích hợp và minh họa tấn công
 
-Bản chạy thử riêng cho bài nhóm ATBMTT. Dùng logic hai lõi Python do Triệu gửi trong cuộc trò chuyện; không lấy trực tiếp mã nguồn từ GitHub. Các chú thích được rút gọn, logic và tên hàm lõi được giữ nguyên. Không thay thế hoặc ghi đè repository của nhóm.
+Phụ trách: Nguyễn Quang Triệu — phân tích độ an toàn, giao diện CLI, tích hợp module, minh họa tấn công.
+Có dùng AI (ChatGPT, Claude) hỗ trợ viết menu, mô phỏng tấn công và kiểm tra tích hợp; Triệu đọc, chạy và giải thích được toàn bộ mã dưới đây. Lõi mật mã là của Trâm Anh và Bắp, không bị sửa.
 
-## Các file
+## Các file của Triệu
 
-| File | Nguồn và vai trò |
+| File | Vai trò |
 |---|---|
-| a51_standard.py | Logic của Trâm Anh; bản sao để chạy thử độc lập |
-| tinya51.py | Logic của Bắp; bản sao để chạy thử độc lập |
-| main.py | Phần Triệu: menu, kiểm tra dữ liệu, gọi module |
-| attack_demo.py | Phần Triệu: mô phỏng dùng lại dòng khóa và hàm suy ra bản rõ |
-| check_integration.py | Kiểm tra tích hợp, không phải bộ test chuẩn của Đăng |
-| README_Trieu.md | Hướng dẫn này |
+| `main.py` | Menu CLI; chỉ hỏi dữ liệu, kiểm tra và gọi module của các bạn |
+| `team_modules.py` | Tìm và nạp đúng module trên main: `a51_core.py` (Trâm Anh), `core_bap/tiny_a5` (Bắp, file không có đuôi .py), `file_io_hang.py` (Hằng) |
+| `attack_bruteforce.py` | **Tấn công vét cạn khóa TinyA5/1 khi biết một phần bản rõ** — kiểu tấn công thuộc phần I |
+| `attack_demo.py` | Minh họa lỗi dùng lại dòng khóa (phần bổ sung, chờ nhóm quyết giữ hay bỏ) |
+| `check_integration.py` | 10 nhóm kiểm tra tích hợp; không thay bộ test của Đăng |
 
-## Chạy trên máy
+## Cách chạy
 
-Cần Python 3, không cần cài thêm thư viện bằng pip. Giải nén, mở Terminal tại thư mục chứa main.py và chạy:
-
-```bash
-python3 main.py
-```
-
-Trên macOS, có thể gõ `cd ` (có dấu cách), kéo thư mục trieu_demo từ Finder vào Terminal, nhấn Enter. Sau đó chạy lệnh trên. Gõ `python3 --version` để kiểm tra máy có Python; nếu máy báo thiếu công cụ hoặc yêu cầu cài đặt, xử lý cài Python trước.
-
-Chạy kiểm tra:
+Đặt các file trên vào **thư mục gốc repository** (cùng chỗ với `a51_core.py` và thư mục `core_bap/`). Cần Python 3, không cài thêm thư viện.
 
 ```bash
-python3 check_integration.py
+python3 main.py              # menu
+python3 check_integration.py # kiểm tra tích hợp
+python3 attack_bruteforce.py # chạy riêng demo vét cạn (khoảng 10–30 giây tùy máy)
 ```
 
-Chạy riêng demo tấn công:
+## Menu
 
-```bash
-python3 attack_demo.py
-```
+| Số | Chức năng | Gọi module của |
+|---|---|---|
+| 1 | TinyA5/1 in từng bước (mặc định K=10010101001110100110000, P=111 → S=100, C=011) | Bắp |
+| 2 | A5/1 mã hóa / giải mã chuỗi văn bản | Trâm Anh |
+| 3 | Mã hóa / giải mã file (văn bản, ảnh) | Hằng |
+| 4 | Chạy bộ kiểm thử trong `tests/` | Đăng |
+| 5 | Tấn công vét cạn khóa TinyA5/1 | Triệu (dùng lõi Bắp) |
+| 6 | Minh họa dùng lại dòng khóa | Triệu (dùng lõi Trâm Anh) |
 
-## Thử menu theo thứ tự
+Menu 3 và 4 không giả chức năng: nếu module chưa sẵn sàng, chương trình nói rõ lý do.
 
-1. Chọn 1. Nhấn Enter hai lần để dùng khóa và bản rõ mẫu. Kết quả S=100, C=011, giải mã=111. Màn hình in ba vòng của Tiny.
-2. Chọn 2. Chọn 1 hoặc Enter để mã hóa. Nhấn Enter cho khóa, frame và bản rõ mẫu. Màn hình cho bản mã dạng bit và bản rõ khôi phục.
-3. Chọn 2, sau đó 2 để giải mã riêng. Nhập đúng khóa, frame, rồi dán bản mã dạng bit đã nhận. Giao diện kiểm tra số bit chia hết cho 8 và UTF-8.
-4. Chọn 5. Màn hình minh họa khôi phục DON900 khi biết DON100 và hai bản mã dùng chung dòng khóa.
-5. Chọn 3 hoặc 4 sẽ thông báo chưa tích hợp Hằng/Đăng. Đây là trạng thái thật, không có chức năng file hoặc test suite giả.
-6. Chọn 0 để thoát.
+- Menu 3 hiện báo: `file_io_hang.py` tự chạy mã hóa/giải mã ngay khi bị import (các dòng cuối file nằm ngoài khối `if __name__ == "__main__":`). Khi Hằng chuyển các dòng đó vào khối này, menu 3 tự hoạt động. Đã thử trên bản sao: mã hóa rồi giải mã `logo.png` cho ảnh giống hệt bản gốc.
+- Menu 4 chạy được khi thư mục `tests/` của Đăng có trên main. Đã thử với `tests/` lấy từ nhánh `Dang-test-suite`: 14 test qua, gồm test vector A5/1.
 
-## Phân tích demo tấn công
+## Demo tấn công vét cạn (menu 5)
 
-Người gửi tạo P1=DON100 và P2=DON900, mỗi bản tin 6 byte, rồi mã hóa cùng khóa, frame=1 và cùng vị trí bắt đầu. Mỗi bản tin chỉ cần 48 bit. Hàm recover_reused_segment chỉ nhận C1, C2 và P1 đã biết (cùng offset bit tùy chọn), không nhận khóa hay dòng khóa. Nó tính C1 XOR C2 XOR P1 để khôi phục P2. Sau đó bên điều khiển demo mới đối chiếu với P2 gốc.
+1. Người gửi mã hóa `"GSM:HEN 9H"` (80 bit) bằng lõi Tiny của Bắp với khóa bí mật 23 bit.
+2. Kẻ tấn công có bản mã và biết phần đầu `"GSM:"` (32 bit).
+3. Tính `S = P XOR C` cho 32 bit đầu → biết 32 bit dòng khóa.
+4. Thử cả 2^23 = 8.388.608 khóa; khóa nào sinh đúng 32 bit đó là ứng viên. Đa số khóa sai bị loại sau 1–2 bit.
+5. Dùng khóa tìm được giải mã toàn bộ bản tin, lộ phần bí mật `"HEN 9H"`.
 
-Nếu P1 chỉ biết một đoạn thì chỉ khôi phục đoạn P2 tương ứng. Hai bản mã phải căn cùng vị trí dòng khóa. Demo đối chiếu đổi frame bản tin thứ hai thành 2 cho thấy cách suy ra cũ không khôi phục được P2 trong bộ dữ liệu này. Điều này không chứng minh mọi cặp frame luôn tạo bản mã khác nhau cho mọi đoạn ngắn.
+Kết quả chạy thật (môi trường thử, Python 3.13): 13,3 giây, 1 ứng viên duy nhất và đúng khóa thật. Nếu chỉ dùng 16 bit đã biết thì có 150 khóa cùng khớp — minh họa vì sao cần đủ bản rõ đã biết (khoảng ≥ độ dài khóa). Tốc độ máy khác sẽ khác.
 
-## Điều đã kiểm tra và điều chưa kiểm tra
+Hàm `brute_force_tiny` chỉ nhận bản rõ đã biết, bản mã và (tuỳ chọn) phần khóa giả định đã biết để thu nhỏ không gian khi demo bị giới hạn thời gian. Không nhận khóa bí mật. Kẻ tấn công tự cài lại bộ sinh Tiny bằng số nguyên (vì thuật toán công khai); bộ này được kiểm tra khớp từng bit với lõi của Bắp trên 500 khóa ngẫu nhiên × 64 bit.
 
-Đã chạy sáu phương thức kiểm tra, có nhiều trường hợp con: hai ví dụ Tiny và giải mã lại; A5/1 khôi phục chuỗi rỗng, ASCII và tiếng Việt; ví dụ tấn công 5 bit; tấn công qua module Trâm Anh gồm đoạn con và frame khác; dữ liệu sai; các luồng menu mã hóa, giải mã, chọn sai và chức năng chờ tích hợp. Tất cả qua khi đóng gói.
+## Giới hạn cần nói rõ
 
-Chưa đối chiếu A5/1 với test vector độc lập. Đoạn code Trâm Anh dùng mảng đánh số từ 1; CLK=(9,11,11) và TAPS tương ứng không được tự sửa chỉ vì khác số trong bảng đánh từ 0. Cần Đăng kiểm chứng thứ tự nạp khóa bằng vector ngoài. Khóa được nạp theo đúng thứ tự ký tự chuỗi, frame theo LSB trước như mã được cung cấp.
-
-Module Trâm Anh tiếp tục sinh dòng bit sau khi khởi tạo; chương trình này không bổ sung cơ chế chia file hay chuyển khung GSM. Chức năng chuỗi dài dùng cơ chế liên tục đang có, không nên gọi là mô phỏng đầy đủ lưu lượng GSM. Demo tấn công chọn bản tin ngắn để không cần quyết định lịch nhiều khung.
-
-Giải mã ra UTF-8 hợp lệ không chứng minh khóa đúng hoặc dữ liệu nguyên vẹn: lõi hiện không có xác thực. Khôi phục khớp bản gốc trong kiểm tra chỉ xác nhận các trường hợp thử.
-
-Tiny vẫn cần đối chiếu slide gốc do phần công thức của Hằng và Bắp trong DOCX đang khác nhau.
-
-## Đưa phần Triệu vào repository
-
-Sau khi clone repository, làm trên nhánh riêng của Triệu và kiểm tra cấu trúc thật trước khi chép file. Nếu hai lõi chưa merge vào main, thống nhất với Hằng cách ghép chúng; tạo nhánh từ main không tự lấy code từ nhánh của các bạn.
-
-File của Triệu là main.py, attack_demo.py, check_integration.py và README_Trieu.md. Hai file lõi là bản sao hỗ trợ chạy thử, không tính là công việc tự viết của Triệu; không chép đè bản của tác giả. Nếu tên module Tiny trên GitHub khác tinya51.py hoặc ở thư mục con, sửa import cho phù hợp. Nếu main.py đã tồn tại, tích hợp vào nó sau khi xem nội dung thay vì ghi đè.
-
-Ví dụ luồng terminal sau khi clone và vào thư mục repo; tên nhánh chỉ là đề xuất:
-
-```bash
-git switch -c trieu-cli-attack
-git status
-```
-
-Sau khi chép, chạy thử và xem thay đổi, chọn đúng các file của mình để commit. Chỉ dùng lệnh dưới đây nếu tên và vị trí file đúng trong repo:
-
-```bash
-git add main.py attack_demo.py check_integration.py README_Trieu.md
-git diff --cached
-git commit -m "feat: them CLI va demo dung lai dong khoa"
-git push -u origin trieu-cli-attack
-```
-
-Tạo Pull Request trên GitHub để nhóm review và ghép. Không cần tạo commit rỗng hoặc chia giả lịch sử cho đủ số lượng. Nếu nhánh đã tồn tại thì chuyển sang nhánh đó, không chạy lại lệnh tạo nhánh cùng tên.
-
-## Nội dung còn bổ sung vào báo cáo
-
-Triệu đã có phần phân tích độ an toàn. Bổ sung mục dùng lại dòng khóa: điều kiện, phép suy ra, kết quả chạy thật, giới hạn và kết luận. Ghi rõ AI hỗ trợ viết menu, mô phỏng tấn công và kiểm tra tích hợp; lõi thuộc phần đóng góp của Trâm Anh và Bắp. Mỗi thành viên phải hiểu phần mã mình nộp.
+- Vét cạn chỉ khả thi vì Tiny có 23 bit khóa. Con số ngoại suy cho A5/1 (2^54, 2^64) chỉ để so sánh độ lớn, không phải đo thực.
+- Kết quả Tiny phụ thuộc quy tắc trong code của Bắp (majority x1, y3, z3…). Phần mô tả của Hằng trong DOCX ghi quy tắc khác; nhóm cần chốt theo slide bài giảng.
+- Lõi A5/1 khớp test vector tham chiếu (khóa 1223456789ABCDEF, frame 0x134) khi khóa hex được chuyển theo thứ tự bit thấp trước trong từng byte (test của Đăng). Menu 2 nhận trực tiếp chuỗi 64 bit, không đổi hex.
+- Lõi không chia dữ liệu dài thành các khung 228 bit như GSM thật và không có xác thực toàn vẹn.

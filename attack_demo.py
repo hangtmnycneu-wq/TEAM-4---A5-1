@@ -1,9 +1,9 @@
-"""Phần Triệu: mô phỏng lỗi dùng lại dòng khóa trên module Trâm Anh.
+"""Phần Triệu: mô phỏng lỗi dùng lại dòng khóa trên lõi A5/1 của Trâm Anh (a51_core.py).
 
 Hàm tấn công không nhận khóa, dòng khóa hay bản rõ mục tiêu.
 Demo 6 byte nằm trong 48 bit đầu, không mô phỏng dữ liệu nhiều khung.
 """
-from a51_standard import crypt_bits, text_to_bits
+from a51_core import crypt_bits, text_to_bits
 
 DEMO_KEY = "1101010100111010011000110101010011101001100011010101001110100110"
 
