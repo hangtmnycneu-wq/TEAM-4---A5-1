@@ -1,20 +1,23 @@
 """Menu CLI Nhóm 4 - A5/1 (phần Triệu). Chạy: python3 main.py
 
 main.py chỉ hỏi dữ liệu, kiểm tra và GỌI module của các bạn:
-- a51_core.py           : lõi A5/1 đầy đủ (Trâm Anh)
-- core_bap/tiny_a5      : lõi TinyA5/1 (Bắp), nạp qua team_modules.py
+- a51_core              : lõi A5/1 đầy đủ (Trâm Anh)      } team_modules.py tự tìm ở thư mục gốc,
+- tiny_a5               : lõi TinyA5/1 (Bắp)              } core_bap/ hoặc tests/
 - file_io_hang.py       : mã hóa/giải mã file (Hằng)
 - tests/                : bộ kiểm thử (Đăng), nếu đã có trên nhánh đang chạy
 - attack_bruteforce.py  : tấn công vét cạn khóa TinyA5/1 (Triệu)
 - attack_demo.py        : minh họa lỗi dùng lại dòng khóa (Triệu)
+- benchmark_a51.py      : đo hiệu năng A5/1 (Trâm Anh), nếu đã có trên nhánh đang chạy
 """
 import os
 import unittest
 
+import team_modules  # noqa: F401  (tìm và nạp lõi của nhóm TRƯỚC mọi import khác)
 from a51_core import crypt_bits, encrypt_text
 from attack_bruteforce import KEY_BITS, run_bruteforce_demo
 from attack_demo import DEMO_KEY, decode_bits_strict, run_attack_demo, validate_bits
-from team_modules import ROOT, TESTS_DIR, TinyA51, file_io_problem, load_file_io
+from team_modules import (ROOT, TESTS_DIR, TinyA51, benchmark_problem, file_io_problem,
+                          load_benchmark, load_file_io)
 
 
 def ask(label: str, default: str) -> str:
@@ -83,12 +86,23 @@ def run_team_tests() -> None:
     print("Bộ test của Đăng:", "QUA" if result.wasSuccessful() else "CÓ LỖI")
 
 
+def run_benchmark() -> None:
+    problem = benchmark_problem()
+    if problem:
+        print("Chưa gọi được công cụ đo hiệu năng của Trâm Anh:", problem)
+        return
+    print("Đo thời gian mã hóa/giải mã A5/1 từ 100 byte đến 500 KB (khoảng 20-30 giây)...")
+    load_benchmark().benchmark_performance()
+
+
 def run_bruteforce() -> None:
     bits = int(ask("Số bit khóa chưa biết (1-23; 23 = vét cạn toàn bộ)", str(KEY_BITS)))
     run_bruteforce_demo(bits)
 
 
 def main() -> None:
+    print("Lõi A5/1:", team_modules.LOADED_FROM["a51_core"],
+          "| Lõi TinyA5/1:", team_modules.LOADED_FROM["tiny_a5"])
     while True:
         print("\n=== NHÓM 4 - MENU A5/1 ===")
         print("1. TinyA5/1 - xem từng bước")
@@ -97,6 +111,7 @@ def main() -> None:
         print("4. Chạy bộ kiểm thử (module Đăng)")
         print("5. Tấn công vét cạn khóa TinyA5/1")
         print("6. Minh họa lỗi dùng lại dòng khóa")
+        print("7. Đo hiệu năng A5/1 (module Trâm Anh)")
         print("0. Thoát")
         try:
             choice = input("Chọn: ").strip()
@@ -104,11 +119,12 @@ def main() -> None:
                 print("Đã thoát.")
                 return
             actions = {"1": run_tiny, "2": run_standard, "3": run_file,
-                       "4": run_team_tests, "5": run_bruteforce, "6": run_attack_demo}
+                       "4": run_team_tests, "5": run_bruteforce, "6": run_attack_demo,
+                       "7": run_benchmark}
             if choice in actions:
                 actions[choice]()
             else:
-                print("Lựa chọn không hợp lệ. Nhập từ 0 đến 6.")
+                print("Lựa chọn không hợp lệ. Nhập từ 0 đến 7.")
         except UnicodeDecodeError:
             print("Không đọc được UTF-8. Kiểm tra khóa, frame và bản mã; dữ liệu có thể sai.")
         except (ValueError, FileNotFoundError) as error:
