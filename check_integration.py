@@ -9,12 +9,13 @@ import unittest
 from contextlib import redirect_stdout
 from unittest.mock import patch
 
+import team_modules  # noqa: F401  (tìm và nạp lõi của nhóm trước)
 from a51_core import crypt_bits, decrypt_text, encrypt_text, text_to_bits
 from attack_bruteforce import brute_force_tiny, fast_keystream, run_bruteforce_demo
 from attack_demo import (DEMO_KEY, decode_bits_strict, recover_reused_segment,
                          validate_bits, xor_bits)
 from main import main
-from team_modules import TinyA51, file_io_problem
+from team_modules import TinyA51, benchmark_problem, file_io_problem
 
 
 def quiet(func, *args):
@@ -99,6 +100,16 @@ class IntegrationChecks(unittest.TestCase):
         problem = file_io_problem()
         self.assertTrue(problem is None or "file_io_hang" in problem)
 
+    def test_benchmark_menu_calls_tram_anh(self):
+        """Khi có benchmark_a51.py, menu 7 phải gọi đúng hàm đo của Trâm Anh."""
+        calls = []
+        fake = type("FakeBenchmark", (), {"benchmark_performance": lambda: calls.append(1)})
+        with patch("main.benchmark_problem", return_value=None), \
+                patch("main.load_benchmark", return_value=fake), \
+                patch("builtins.input", side_effect=["7", "0"]):
+            quiet(main)
+        self.assertEqual(calls, [1])
+
     def test_menu_paths(self):
         sequences = [
             ["1", "", "", "0"],
@@ -112,6 +123,8 @@ class IntegrationChecks(unittest.TestCase):
         if file_io_problem():  # khi module Hằng chưa an toàn, menu 3 chỉ được báo lý do
             sequences.append(["3", "0"])
         sequences.append(["4", "0"])  # có tests/ thì chạy test Đăng, chưa có thì báo
+        if benchmark_problem():       # chưa có file Trâm Anh thì menu 7 chỉ báo lý do
+            sequences.append(["7", "0"])
         for inputs in sequences:
             with self.subTest(inputs=inputs), patch("builtins.input", side_effect=inputs):
                 quiet(main)

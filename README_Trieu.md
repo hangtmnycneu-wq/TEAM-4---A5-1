@@ -8,14 +8,14 @@ Có dùng AI (ChatGPT, Claude) hỗ trợ viết menu, mô phỏng tấn công v
 | File | Vai trò |
 |---|---|
 | `main.py` | Menu CLI; chỉ hỏi dữ liệu, kiểm tra và gọi module của các bạn |
-| `team_modules.py` | Tìm và nạp đúng module trên main: `a51_core.py` (Trâm Anh), `core_bap/tiny_a5` (Bắp, file không có đuôi .py), `file_io_hang.py` (Hằng) |
+| `team_modules.py` | Tự tìm hai lõi ở thư mục gốc, `core_bap/` hoặc `tests/` (nơi Đăng chuyển vào ngày 05/11) và nạp đúng một bản; kiểm tra an toàn trước khi gọi `file_io_hang.py` (Hằng) và `benchmark_a51.py` (Trâm Anh) |
 | `attack_bruteforce.py` | **Tấn công vét cạn khóa TinyA5/1 khi biết một phần bản rõ** — kiểu tấn công thuộc phần I |
 | `attack_demo.py` | Minh họa lỗi dùng lại dòng khóa (phần bổ sung, chờ nhóm quyết giữ hay bỏ) |
-| `check_integration.py` | 10 nhóm kiểm tra tích hợp; không thay bộ test của Đăng |
+| `check_integration.py` | 11 nhóm kiểm tra tích hợp; không thay bộ test của Đăng |
 
 ## Cách chạy
 
-Đặt các file trên vào **thư mục gốc repository** (cùng chỗ với `a51_core.py` và thư mục `core_bap/`). Cần Python 3, không cài thêm thư viện.
+Đặt các file trên vào **thư mục gốc repository** (cùng chỗ với `file_io_hang.py`, `benchmark_a51.py` và thư mục `tests/`). Hai lõi có thể nằm ở thư mục gốc, `core_bap/` hoặc `tests/`: dòng đầu tiên khi chạy menu cho biết lõi được nạp từ đâu. Cần Python 3, không cài thêm thư viện.
 
 ```bash
 python3 main.py              # menu
@@ -33,11 +33,14 @@ python3 attack_bruteforce.py # chạy riêng demo vét cạn (khoảng 10–30 g
 | 4 | Chạy bộ kiểm thử trong `tests/` | Đăng |
 | 5 | Tấn công vét cạn khóa TinyA5/1 | Triệu (dùng lõi Bắp) |
 | 6 | Minh họa dùng lại dòng khóa | Triệu (dùng lõi Trâm Anh) |
+| 7 | Đo thời gian mã hóa/giải mã A5/1 từ 100 byte đến 500 KB | Trâm Anh (`benchmark_a51.py`) |
 
-Menu 3 và 4 không giả chức năng: nếu module chưa sẵn sàng, chương trình nói rõ lý do.
+Menu 3, 4 và 7 không giả chức năng: nếu module chưa sẵn sàng, chương trình nói rõ lý do.
 
-- Menu 3 hiện báo: `file_io_hang.py` tự chạy mã hóa/giải mã ngay khi bị import (các dòng cuối file nằm ngoài khối `if __name__ == "__main__":`). Khi Hằng chuyển các dòng đó vào khối này, menu 3 tự hoạt động. Đã thử trên bản sao: mã hóa rồi giải mã `logo.png` cho ảnh giống hệt bản gốc.
-- Menu 4 chạy được khi thư mục `tests/` của Đăng có trên main. Đã thử với `tests/` lấy từ nhánh `Dang-test-suite`: 14 test qua, gồm test vector A5/1.
+- Menu 7 chạy bảng đo của Trâm Anh (`benchmark_a51.py`, đã có trên main từ 04/11): khoảng 20–30 giây, mọi mốc giải mã đúng.
+
+- Menu 3 hiện báo: `file_io_hang.py` tự chạy mã hóa/giải mã ngay khi bị import (các dòng cuối file nằm ngoài khối `if __name__ == "__main__":`). Khi Hằng chuyển các dòng đó vào khối này, menu 3 tự hoạt động. Đã thử trên bản sao: mã hóa rồi giải mã `logo.png` cho ảnh giống hệt bản gốc. Lưu ý: `test.txt` và `logo.png` đã bị xóa khỏi main ngày 05/11, cần đưa lại một tệp mẫu để demo.
+- Menu 4 chạy bộ test của Đăng trong `tests/` (đã có trên main từ 05/11): 14/14 qua, gồm test vector A5/1.
 
 ## Demo tấn công vét cạn (menu 5)
 
