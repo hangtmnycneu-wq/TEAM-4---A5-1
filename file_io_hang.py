@@ -51,28 +51,24 @@ def process_file_a51(input_file, output_file, key, frame_number):
     print(f"Xử lý hoàn tất! File đầu ra lưu tại: {output_file}")
 
 # --- KỊCH BẢN TEST CỦA RIÊNG LEADER ---
+# Chỉ chạy khi gọi trực tiếp: python3 file_io_hang.py
+# (khi main.py import file này để dùng mục 3 thì KHÔNG tự chạy, nên không ghi đè tệp).
 if __name__ == "__main__":
-    # Test thử file văn bản
-    # process_file_a51("test_input.txt", "encrypted.bin", key="khoa_test", frame_number=123)
-    
-    # Test giải mã lại xem có khôi phục đúng không
-    # process_file_a51("encrypted.bin", "decrypted.txt", key="khoa_test", frame_number=123)
-    pass
-# Tạo biến key_chuan chứa 64 bit trước khi dùng
-key_chuan = "1101010100111010011000110101010011101001100011010101001110100110"
+    # Tạo biến key_chuan chứa 64 bit trước khi dùng
+    key_chuan = "1101010100111010011000110101010011101001100011010101001110100110"
 
-# 1. Mã hoá
-process_file_a51("test.txt", "test_encrypted.bin", key_chuan, 1)
-print("1. Đã mã hoá thành công!")
+    # 1. Mã hoá
+    process_file_a51("test.txt", "test_encrypted.bin", key_chuan, 1)
+    print("1. Đã mã hoá thành công!")
 
-# 2. Giải mã
-process_file_a51("test_encrypted.bin", "test_decrypted.txt", key_chuan, 1)
-print("2. Đã giải mã thành công!")
+    # 2. Giải mã
+    process_file_a51("test_encrypted.bin", "test_decrypted.txt", key_chuan, 1)
+    print("2. Đã giải mã thành công!")
 
-# 3. Test mã hoá với file ảnh (logo.png)
-process_file_a51("logo.png", "logo_encrypted.bin", key_chuan, 1)
-print("3. Đã mã hoá ảnh logo thành công!")
+    # 3. Test mã hoá với file ảnh (logo.png)
+    process_file_a51("logo.png", "logo_encrypted.bin", key_chuan, 1)
+    print("3. Đã mã hoá ảnh logo thành công!")
 
-# 4. Test giải mã file ảnh (Nhớ để đuôi đầu ra là .png)
-process_file_a51("logo_encrypted.bin", "logo_decrypted.png", key_chuan, 1)
-print("4. Đã giải mã ảnh logo thành công!")
+    # 4. Test giải mã file ảnh (Nhớ để đuôi đầu ra là .png)
+    process_file_a51("logo_encrypted.bin", "logo_decrypted.png", key_chuan, 1)
+    print("4. Đã giải mã ảnh logo thành công!")
