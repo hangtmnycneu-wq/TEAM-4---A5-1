@@ -14,13 +14,13 @@ phần khóa giả định đã biết để thu nhỏ không gian khi demo. Kh�
 
 Kẻ tấn công được biết thuật toán (nguyên lý Kerckhoffs), nên tự cài lại bộ sinh
 Tiny bằng số nguyên cho nhanh (_tiny_bits). Bộ này được kiểm tra khớp từng bit với
-lõi của Bắp trong check_integration.py; khóa tìm được cũng được xác nhận lại bằng
+lõi của Bắp trong tests/test_cli_attack.py; khóa tìm được cũng được xác nhận lại bằng
 chính lõi của Bắp.
 """
 import time
 
 from attack_demo import validate_bits, xor_bits
-from team_modules import TinyA51
+from tiny_a5 import TinyA51
 
 KEY_BITS = 23
 
