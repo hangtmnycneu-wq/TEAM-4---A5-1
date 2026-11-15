@@ -35,7 +35,7 @@ TEAM-4---A5-1/
 │  ├─ test_a51_core.py
 │  ├─ test_cli_attack.py
 │  └─ test_tiny_a51.py
-├─ logo.png, logo_encrypted.bin, logo_decrypted.png, test.txt   # Tệp mẫu để demo (chức năng 3)
+├─ logo.png, logo_encrypted.bin, logo_decrypted.png, test.txt, test_encrypted.bin, test_decrypted.txt   # Tệp mẫu để demo (chức năng 3)
 ├─ test_results.txt        # Kết quả chạy bộ kiểm thử
 └─ README.md
 ```
